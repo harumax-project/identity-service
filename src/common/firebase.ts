@@ -8,7 +8,7 @@ export class Firebase {
       process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099'
       admin.initializeApp({ projectId: process.env.GCLOUD_PROJECT })
       console.log(
-        `running on Firebase Emulator! project: ${process.env.GCLOUD_PROJECT}`,
+        `Running on Firebase Emulator! project: ${process.env.GCLOUD_PROJECT}`,
       )
       this.firestore = admin.firestore()
     } else {
