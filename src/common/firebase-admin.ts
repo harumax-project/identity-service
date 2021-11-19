@@ -12,14 +12,14 @@ export class FirebaseAdmin {
 
       admin.initializeApp({ projectId: process.env.GCLOUD_PROJECT })
       console.log(
-        `Running on Firebase Emulator! project: ${process.env.GCLOUD_PROJECT}`,
+        `Firebase admin SDK is Running on Firebase Emulator! project: ${process.env.GCLOUD_PROJECT}`,
       )
       this.adminFirestore = admin.firestore()
       this.adminFirebaseAuth = admin.auth()
     } else {
       admin.initializeApp({ credential: admin.credential.applicationDefault() })
       console.log(
-        `running on Firebase Production! project: ${process.env.GCLOUD_PROJECT}`,
+        `Firebase admin SDK is running on Firebase Production! project: ${process.env.GCLOUD_PROJECT}`,
       )
       this.adminFirestore = admin.firestore()
       this.adminFirebaseAuth = admin.auth()
