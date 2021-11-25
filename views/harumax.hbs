@@ -24,7 +24,7 @@
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    let uiConfig = {
+    const uiConfig = {
       signInSuccessUrl: '{{ signInRedirectURL }}',
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -33,11 +33,14 @@
       ],
     };
 
-    let ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+    const ui = new firebaseui.auth.AuthUI(firebase.auth());
     ui.start('#firebaseui-auth-container', uiConfig);
     firebase.auth().onAuthStateChanged((user) => {
       user.getIdToken().then((idToken) => {
-        console.log(idToken)
+        fetch('{{ sessionLogin }}', {
+          headers: { 'Authorization': `Bearer ${idToken}` }
+        }).then(() => { });
       });
     });
   </script>
