@@ -9,3 +9,12 @@ export type DecodedJWTToken = {
   exp: number
   firebase: { identities: object; sign_in_provider: string }
 }
+
+export type AuthStatus = {
+  status: 'true' | 'false'
+  customToken: string | null
+}
+
+export type AuthQuery = {
+  originUrl: string
+}
