@@ -16,14 +16,27 @@ export class AuthController {
 
   @Get('login')
   signInWithFirebaseUi(@Req() req: Request, @Res() res: Response) {
+    const redirectURL = this.authService.getRedirectUrl(req)
     return res.render(
       `${process.env.HTML_NAME}`,
       {
         title: 'Identity',
         firebaseConfig: FIREBASE_CLIENT.firebaseConfig,
-        // signInRedirectURL: req.headers.origin,
-        signInRedirectURL: 'http://localhost:3000/auth/login',
+        signInRedirectURL: redirectURL,
         sessionLogin: `${process.env.IDENTITY_SERVICE_URL}/auth/session_login`,
+      },
+      (err, html) => {
+        res.send(html)
+      },
+    )
+  }
+
+  @Get('navigate')
+  navigate(@Req() req: Request, @Res() res: Response) {
+    return res.render(
+      'navigate',
+      {
+        title: 'navigate',
       },
       (err, html) => {
         res.send(html)
@@ -58,10 +71,7 @@ export class AuthController {
   @Get('status')
   async checkAuthStatus(@Req() req: Request, @Res() res: Response) {
     try {
-      console.log(req.cookies.__session)
-      console.log(req.headers.name)
       const authStatus = await this.authService.checkAuthStatus(req)
-      console.log(authStatus)
       res.json(authStatus)
     } catch (e) {
       res.status(500).send('Internal server error')
