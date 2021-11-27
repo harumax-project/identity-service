@@ -53,7 +53,6 @@ export class AuthService {
 
   public getRedirectUrl(req: Request): string {
     const referer = req.headers.referer
-    //ここは後で実装する
     return !referer
       ? `${process.env.IDENTITY_SERVICE_URL}/auth/navigate`
       : referer
