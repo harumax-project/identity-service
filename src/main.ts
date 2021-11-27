@@ -35,10 +35,10 @@ async function bootstrap() {
   //cors
   app.enableCors({
     origin: function (origin, callback) {
-      const isLocalDev = process.env.NODE_ENV === 'local' || 'localDev'
+      const isLocalDev =
+        process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'localDev'
       const isInDevWhiteList = devWhiteList.indexOf(origin) !== -1
       const isInWhiteList = whitelist.indexOf(origin) !== -1
-      console.log(isInDevWhiteList)
       if ((isLocalDev && isInDevWhiteList) || !origin) {
         console.log('allowed origin from local development', origin)
         callback(null, true)
