@@ -6,6 +6,7 @@ import { auth } from 'google-auth-library'
 import { Request } from 'express'
 import { AuthStatus, DecodedJWTToken } from './dto/auth.dto'
 import { FIREBASE_ADMIN } from 'src/main'
+import { getAuth, signOut } from 'firebase/auth'
 
 @Injectable()
 export class AuthService {
@@ -53,9 +54,13 @@ export class AuthService {
 
   public getRedirectUrl(req: Request): string {
     const referer = req.headers.referer
-    //ここは後で実装する
     return !referer
       ? `${process.env.IDENTITY_SERVICE_URL}/auth/navigate`
       : referer
+  }
+
+  public logout() {
+    const auth = getAuth()
+    signOut(auth)
   }
 }

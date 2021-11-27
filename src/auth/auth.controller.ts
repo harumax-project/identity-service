@@ -1,10 +1,7 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Post, Req, Res } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { Request, Response } from 'express'
 import { FIREBASE_ADMIN, FIREBASE_CLIENT } from 'src/main'
-import { FirebaseAdmin } from 'src/common/firebase-admin'
-import { FirebaseClient } from 'src/common/firebase-client'
-import { DecodedJWTToken } from './dto/auth.dto'
 
 @Controller('auth')
 export class AuthController {
@@ -58,7 +55,7 @@ export class AuthController {
     FIREBASE_ADMIN.auth.createSessionCookie(idToken, { expiresIn }).then(
       (sessionCookie) => {
         res.cookie('__session', sessionCookie, options)
-        res.cookie('csrfToken', csrfToken, options)
+        res.cookie('__Secure_csrf', csrfToken, options)
         res.send(JSON.stringify({ status: 'success' }))
       },
       (error) => {
@@ -78,9 +75,21 @@ export class AuthController {
     }
   }
 
-  @Post('logout')
+  @Delete('logout')
   logout(@Req() req: Request, @Res() res: Response) {
-    res.clearCookie('__session')
-    res.redirect('')
+    try {
+      this.authService.logout()
+      const options = {
+        httpOnly: true,
+        secure: true,
+        domain: process.env.BASE_DOMAIN,
+        path: '/',
+      }
+      res.clearCookie('__session', options)
+      res.clearCookie('__Secure_csrf', options)
+      res.json({ status: 'false', customToken: null })
+    } catch (e) {
+      res.status(500).send('Internal server error')
+    }
   }
 }
