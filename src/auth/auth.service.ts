@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Res } from '@nestjs/common'
 import * as jwt from 'jsonwebtoken'
 import jwt_decode from 'jwt-decode'
 
@@ -59,8 +59,28 @@ export class AuthService {
       : referer
   }
 
-  public logout() {
-    const auth = getAuth()
-    signOut(auth)
+  public async logout(req: Request) {
+    const idToken = req.cookies.__session
+    if (!idToken) return { status: 'false', customToken: null }
+
+    const uid = this.decodeIdToken(idToken).user_id
+    const adminAuth = FIREBASE_ADMIN.auth
+    try {
+      await adminAuth
+        .revokeRefreshTokens(uid)
+        .then(() => {
+          console.log(uid)
+          return adminAuth.getUser(uid)
+        })
+        .then((userRecord) => {
+          return new Date(userRecord.tokensValidAfterTime).getTime() / 1000
+        })
+        .then((timestamp) => {
+          console.log(`Tokens revoked at: ${timestamp}`)
+        })
+    } catch (e) {
+      console.log(e)
+      return 'error'
+    }
   }
 }

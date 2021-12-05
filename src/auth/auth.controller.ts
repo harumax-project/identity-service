@@ -43,6 +43,7 @@ export class AuthController {
 
   @Get('session_login')
   async sessionLogin(@Req() req: Request, @Res() res: Response) {
+    console.log('session login')
     const idToken = req.headers.authorization.split(' ')[1]
     const csrfToken = await this.authService.createCsrfToken(req)
     const expiresIn = 60000 * 5
@@ -67,6 +68,7 @@ export class AuthController {
 
   @Get('status')
   async checkAuthStatus(@Req() req: Request, @Res() res: Response) {
+    console.log('check auth status')
     try {
       const authStatus = await this.authService.checkAuthStatus(req)
       res.json(authStatus)
@@ -76,9 +78,8 @@ export class AuthController {
   }
 
   @Delete('logout')
-  logout(@Req() req: Request, @Res() res: Response) {
+  async logout(@Req() req: Request, @Res() res: Response) {
     try {
-      this.authService.logout()
       const options = {
         httpOnly: true,
         secure: true,
@@ -87,6 +88,7 @@ export class AuthController {
       }
       res.clearCookie('__session', options)
       res.clearCookie('__Secure_csrf', options)
+      await this.authService.logout(req)
       res.json({ status: 'false', customToken: null })
     } catch (e) {
       res.status(500).send('Internal server error')

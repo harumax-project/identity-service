@@ -25,7 +25,6 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const uiConfig = {
-      signInSuccessUrl: '{{ signInRedirectURL }}',
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
@@ -37,11 +36,20 @@
     const ui = new firebaseui.auth.AuthUI(firebase.auth());
     ui.start('#firebaseui-auth-container', uiConfig);
     firebase.auth().onAuthStateChanged((user) => {
-      user.getIdToken().then((idToken) => {
-        fetch('{{ sessionLogin }}', {
-          headers: { 'Authorization': `Bearer ${idToken}` }
-        }).then(() => { });
-      });
+      if (!user) {
+        console.log('logged out')
+      } else {
+        console.log('logged in')
+        user.getIdToken().then((idToken) => {
+          fetch('{{ sessionLogin }}', {
+            headers: { 'Authorization': `Bearer ${idToken}` }
+          }).then(() => {
+            console.log('log in success now')
+            console.log('{{ signInRedirectURL }}')
+            window.location.href = '{{ signInRedirectURL }}'
+           });
+        });
+      }
     });
   </script>
 </head>
