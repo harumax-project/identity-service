@@ -39,15 +39,14 @@
       if (!user) {
         console.log('logged out')
       } else {
-        console.log('logged in')
         user.getIdToken().then((idToken) => {
           fetch('{{ sessionLogin }}', {
             headers: { 'Authorization': `Bearer ${idToken}` }
           }).then(() => {
-            console.log('log in success now')
             console.log('{{ signInRedirectURL }}')
+            firebase.auth().signOut()
             window.location.href = '{{ signInRedirectURL }}'
-           });
+          });
         });
       }
     });
