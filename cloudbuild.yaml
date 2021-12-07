@@ -28,4 +28,3 @@ steps:
       - "--region=asia-northeast1"
       - "--platform=managed"
       - "--allow-unauthenticated"
-    substitutions:
