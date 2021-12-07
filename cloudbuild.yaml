@@ -7,7 +7,7 @@ steps:
     args: ["push", "gcr.io/$PROJECT_ID/harumax-identity-service"]
   #もろもろの設定
   - name: "gcr.io/cloud-builders/gcloud"
-  serviceAccount: "projects/$PROJECT_ID/serviceAccounts/harumax-identity-service@harumax.iam.gserviceaccount.com"
+  - serviceAccount: "projects/$PROJECT_ID/serviceAccounts/harumax-identity-service@harumax.iam.gserviceaccount.com"
     args:
       - "alpha"
       - "run"
@@ -27,3 +27,4 @@ steps:
       - "FIREBASE_APP_ID"="$_FIREBASE_APP_ID"
       - "FIREBASE_MESUREMENT_ID"="$_FIREBASE_MESUREMENT_ID"
       - "IDENTITY_SERVICE_URL="$_IDENTITY_SERVICE_URL"
+      - "--allow-unauthenticated"
