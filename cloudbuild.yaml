@@ -2,7 +2,7 @@ steps:
   #コンテナイメージをビルドする
   - name: "gcr.io/cloud-builders/docker"
     args:
-      - 'build',
+      - build'
       - '-t=gcr.io/$PROJECT_ID/harumax-identity-service'
       - "HTML_NAME=$_HTML_NAME"
       - "BASE_DOMAIN=$_BASE_DOMAIN"
