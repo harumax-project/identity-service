@@ -19,7 +19,7 @@ export class AuthController {
       return res.render('navigate')
     }
     return res.render(
-      `${process.env.HTML_NAME}`,
+      `${process.env.FIREBASE_PROJECT_ID}`,
       {
         title: 'Identity',
         firebaseConfig: FIREBASE_CLIENT.firebaseConfig,
