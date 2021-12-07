@@ -14,6 +14,10 @@ export class AuthController {
   @Get('login')
   signInWithFirebaseUi(@Req() req: Request, @Res() res: Response) {
     const redirectURL = this.authService.getRedirectUrl(req)
+    const sessionToken = req.cookies.__session
+    if (sessionToken) {
+      return res.render('navigate')
+    }
     return res.render(
       `${process.env.HTML_NAME}`,
       {

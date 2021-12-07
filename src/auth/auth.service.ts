@@ -60,24 +60,24 @@ export class AuthService {
   }
 
   public async logout(req: Request) {
-    const idToken = req.cookies.__session
-    if (!idToken) return { status: 'false', customToken: null }
+    const sessionToken = req.cookies.__session
+    if (!sessionToken) return { status: 'false', customToken: null }
 
-    const uid = this.decodeIdToken(idToken).user_id
+    const uid = this.decodeIdToken(sessionToken).user_id
     const adminAuth = FIREBASE_ADMIN.auth
     try {
-      await adminAuth
-        .revokeRefreshTokens(uid)
-        .then(() => {
-          console.log(uid)
-          return adminAuth.getUser(uid)
-        })
-        .then((userRecord) => {
-          return new Date(userRecord.tokensValidAfterTime).getTime() / 1000
-        })
-        .then((timestamp) => {
-          console.log(`Tokens revoked at: ${timestamp}`)
-        })
+      // await adminAuth
+      //   .revokeRefreshTokens(uid)
+      //   .then(() => {
+      //     console.log(uid)
+      //     return adminAuth.getUser(uid)
+      //   })
+      //   .then((userRecord) => {
+      //     return new Date(userRecord.tokensValidAfterTime).getTime() / 1000
+      //   })
+      //   .then((timestamp) => {
+      //     console.log(`Tokens revoked at: ${timestamp}`)
+      //   })
     } catch (e) {
       console.log(e)
       return 'error'
