@@ -48,10 +48,10 @@ export class AuthService {
   public async checkCsrfToken(csrfToken: string, sessionToken: string) {
     const uid = this.decodeIdToken(sessionToken).user_id
     const keyId = process.env.SA_KEY_ID
-    console.log(process.env.SA_NAME)
+    const serviceAccount = process.env.SA_NAME
+    console.log(serviceAccount)
     const pubCerts = await axios.get(
-      'https://www.googleapis.com/robot/v1/metadata/x509/harumax-identity-service@harumax.iam.gserviceaccount.com',
-      // `https://www.googleapis.com/robot/v1/metadata/x509/${process.env.SA_NAME}`,
+      `https://www.googleapis.com/robot/v1/metadata/x509/${serviceAccount}`,
     )
     const publicCert = pubCerts.data[keyId]
     const decoded = jwt.verify(csrfToken, publicCert)
