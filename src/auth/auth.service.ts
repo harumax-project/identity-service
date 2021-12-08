@@ -24,9 +24,9 @@ export class AuthService {
       const decodedToken = this.decodeIdTokenFromHeaders(req)
       const uid = decodedToken.user_id
       const payload = { uid }
-      const creds = await auth.getCredentials()
-      console.log(creds)
-      const privateKey = creds.private_key
+      const privateKey = (await auth.getCredentials()).private_key
+      console.log(privateKey)
+      // const privateKey = creds.private_key
       const csrfToken = jwt.sign(payload, privateKey, { algorithm: 'RS256' })
       return csrfToken as string
     } catch (e) {
