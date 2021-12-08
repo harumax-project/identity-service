@@ -29,6 +29,8 @@ steps:
     "_SA_KEY=$_SA_KEY",
     "--build-arg",
     "_SA_KEY_ID=$_SA_KEY_ID",
+    "--build-arg",
+    "_SA_NAME=$_SA_NAME",
     "."
     ]
   #コンテナイメージをpushする
