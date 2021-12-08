@@ -50,7 +50,8 @@ export class AuthService {
     const keyId = process.env.SA_KEY_ID
     console.log(process.env.SA_NAME)
     const pubCerts = await axios.get(
-      `https://www.googleapis.com/robot/v1/metadata/x509/${process.env.SA_NAME}`,
+      'https://www.googleapis.com/robot/v1/metadata/x509/harumax-identity-service@harumax.iam.gserviceaccount.com',
+      // `https://www.googleapis.com/robot/v1/metadata/x509/${process.env.SA_NAME}`,
     )
     const publicCert = pubCerts.data[keyId]
     const decoded = jwt.verify(csrfToken, publicCert)
