@@ -2,10 +2,11 @@ import { Injectable, Res } from '@nestjs/common'
 import * as jwt from 'jsonwebtoken'
 import jwt_decode from 'jwt-decode'
 
-import { auth } from 'google-auth-library'
+import { auth, JWT } from 'google-auth-library'
 import { Request } from 'express'
 import { AuthStatus, DecodedJWTToken } from './dto/auth.dto'
 import { FIREBASE_ADMIN } from 'src/main'
+import axios from 'axios'
 
 @Injectable()
 export class AuthService {
@@ -24,11 +25,10 @@ export class AuthService {
       const decodedToken = this.decodeIdTokenFromHeaders(req)
       const uid = decodedToken.user_id
       const payload = { uid }
-      const creds = await auth.getCredentials()
-      const privateKey = !creds.private_key
-        ? process.env.SA_KEY
-        : creds.private_key
-      const csrfToken = jwt.sign(payload, privateKey, { algorithm: 'RS256' })
+      const privateKey = process.env.SA_KEY.replace(/\\n/g, '\n')
+      const csrfToken = jwt.sign(payload, privateKey, {
+        algorithm: 'RS256',
+      })
       return csrfToken as string
     } catch (e) {
       console.log(e)
@@ -45,11 +45,21 @@ export class AuthService {
     }
   }
 
-  public async checkAuthStatus(req: Request): Promise<AuthStatus> {
-    const idToken = req.cookies.__session
-    if (!idToken) return { status: 'false', customToken: null }
+  public async checkCsrfToken(csrfToken: string, sessionToken: string) {
+    const uid = this.decodeIdToken(sessionToken).user_id
+    const keyId = process.env.SA_KEY_ID
+    const pubCerts = await axios.get(
+      `https://www.googleapis.com/robot/v1/metadata/x509/${process.env.SA_NAME}`,
+    )
+    const publicCert = pubCerts.data[keyId]
+    const decoded = jwt.verify(csrfToken, publicCert)
+    return decoded.uid === uid ? true : false
+  }
 
-    const uid = this.decodeIdToken(idToken).user_id
+  public async checkAuthStatus(sessionToken: string): Promise<AuthStatus> {
+    if (!sessionToken) return { status: 'false', customToken: null }
+
+    const uid = this.decodeIdToken(sessionToken).user_id
     const customToken = await this.createCustomToken(uid)
 
     if (customToken) return { status: 'true', customToken }
@@ -71,18 +81,18 @@ export class AuthService {
     const uid = this.decodeIdToken(sessionToken).user_id
     const adminAuth = FIREBASE_ADMIN.auth
     try {
-      // await adminAuth
-      //   .revokeRefreshTokens(uid)
-      //   .then(() => {
-      //     console.log(uid)
-      //     return adminAuth.getUser(uid)
-      //   })
-      //   .then((userRecord) => {
-      //     return new Date(userRecord.tokensValidAfterTime).getTime() / 1000
-      //   })
-      //   .then((timestamp) => {
-      //     console.log(`Tokens revoked at: ${timestamp}`)
-      //   })
+      await adminAuth
+        .revokeRefreshTokens(uid)
+        .then(() => {
+          console.log(uid)
+          return adminAuth.getUser(uid)
+        })
+        .then((userRecord) => {
+          return new Date(userRecord.tokensValidAfterTime).getTime() / 1000
+        })
+        .then((timestamp) => {
+          console.log(`Tokens revoked at: ${timestamp}`)
+        })
     } catch (e) {
       console.log(e)
       return 'error'

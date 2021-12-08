@@ -6,6 +6,8 @@ import { FirebaseClient } from './common/firebase-client'
 import { FirebaseAdmin } from './common/firebase-admin'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { join } from 'path'
+import * as os from 'os';
+
 
 const whitelist = [
   'https://harumax.com',

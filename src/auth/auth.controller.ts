@@ -74,8 +74,17 @@ export class AuthController {
   @Get('status')
   async checkAuthStatus(@Req() req: Request, @Res() res: Response) {
     console.log('check auth status')
+    const csrfToken = req.cookies.__Secure_csrf
+    const sessionToken = req.cookies.__session
+    if (!csrfToken || !sessionToken)
+      return res.json({ status: 'false', customToken: null })
+    const isSecure = await this.authService.checkCsrfToken(
+      csrfToken,
+      sessionToken,
+    )
+    if (!isSecure) return res.json({ status: 'false', customToken: null })
     try {
-      const authStatus = await this.authService.checkAuthStatus(req)
+      const authStatus = await this.authService.checkAuthStatus(sessionToken)
       res.json(authStatus)
     } catch (e) {
       res.status(500).send('Internal server error')

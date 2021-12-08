@@ -27,6 +27,8 @@ steps:
     "_IDENTITY_SERVICE_URL=$_IDENTITY_SERVICE_URL",
     "--build-arg",
     "_SA_KEY=$_SA_KEY",
+    "--build-arg",
+    "_SA_KEY_ID=$_SA_KEY_ID",
     "."
     ]
   #コンテナイメージをpushする
