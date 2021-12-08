@@ -9,6 +9,7 @@ import { join } from 'path'
 
 const whitelist = [
   'https://harumax.com',
+  'https://katten.harumax.com',
   'https://www.harumax.com',
   'https://api.harumax.com',
   'https://id.harumax.com',
