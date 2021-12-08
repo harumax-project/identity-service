@@ -6,7 +6,6 @@ import { auth } from 'google-auth-library'
 import { Request } from 'express'
 import { AuthStatus, DecodedJWTToken } from './dto/auth.dto'
 import { FIREBASE_ADMIN } from 'src/main'
-import { getAuth, signOut } from 'firebase/auth'
 
 @Injectable()
 export class AuthService {
@@ -21,14 +20,19 @@ export class AuthService {
   }
 
   public async createCsrfToken(req: Request) {
-    const decodedToken = this.decodeIdTokenFromHeaders(req)
-    const uid = decodedToken.user_id
-
-    const payload = { uid }
-    const creds = await auth.getCredentials()
-    const privateKey = creds.private_key
-    const csrfToken = jwt.sign(payload, privateKey, { algorithm: 'RS256' })
-    return csrfToken as string
+    try {
+      const decodedToken = this.decodeIdTokenFromHeaders(req)
+      const uid = decodedToken.user_id
+      const payload = { uid }
+      const creds = await auth.getCredentials()
+      console.log(creds)
+      const privateKey = creds.private_key
+      const csrfToken = jwt.sign(payload, privateKey, { algorithm: 'RS256' })
+      return csrfToken as string
+    } catch (e) {
+      console.log(e)
+      return 'error'
+    }
   }
 
   public createCustomToken(uid: string) {
