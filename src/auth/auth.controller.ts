@@ -1,11 +1,16 @@
 import { Body, Controller, Delete, Get, Post, Req, Res } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { Request, Response } from 'express'
-import { FIREBASE_ADMIN, FIREBASE_CLIENT } from 'src/main'
+import { FirebaseClientService } from '../firebase-client/firebase-client.service'
+import { FirebaseAdminService } from '../firebase-admin/firebase-admin.service'
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private firebaseClint: FirebaseClientService,
+    private firebaseAdmin: FirebaseAdminService,
+  ) {}
   @Get()
   getRoot(@Req() req: Request, @Res() res: Response) {
     res.json({ message: 'identity service is alive' })
@@ -22,7 +27,7 @@ export class AuthController {
       `${process.env.FIREBASE_PROJECT_ID}`,
       {
         title: 'Identity',
-        firebaseConfig: FIREBASE_CLIENT.firebaseConfig,
+        firebaseConfig: this.firebaseClint.firebaseConfig,
         signInRedirectURL: redirectURL,
         sessionLogin: `${process.env.IDENTITY_SERVICE_URL}/auth/session_login`,
       },
@@ -58,7 +63,7 @@ export class AuthController {
       secure: true,
       domain: process.env.BASE_DOMAIN,
     }
-    FIREBASE_ADMIN.auth.createSessionCookie(idToken, { expiresIn }).then(
+    this.firebaseAdmin.auth.createSessionCookie(idToken, { expiresIn }).then(
       (sessionCookie) => {
         res.cookie('__session', sessionCookie, options)
         res.cookie('__Secure_csrf', csrfToken, options)
