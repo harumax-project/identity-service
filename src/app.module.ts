@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { AuthModule } from './modules/auth/auth.module'
-import { FirebaseClientModule } from './common-modules/firebase-client/firebase-client.module'
-import { FirebaseAdminModule } from './common-modules/firebase-admin/firebase-admin.module'
+import { AuthModule } from './functions/auth/auth.module'
+import { FirebaseClientModule } from './common-functions/firebase-client/firebase-client.module'
+import { FirebaseAdminModule } from './common-functions/firebase-admin/firebase-admin.module'
+import { UsersModule } from './functions/users/users.module';
 import configuration from './config/configuration'
 
 @Module({
@@ -13,6 +14,7 @@ import configuration from './config/configuration'
     AuthModule,
     FirebaseClientModule,
     FirebaseAdminModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { FirebaseAdminService } from '../../../src/common-modules/firebase-admin/firebase-admin.service'
-import { FirebaseClientService } from '../../../src/common-modules/firebase-client/firebase-client.service'
-import { AuthController } from '../../../src/modules/auth/auth.controller'
-import { AuthService } from '../../../src/modules/auth/auth.service'
+import { FirebaseAdminService } from '../../../src/common-functions/firebase-admin/firebase-admin.service'
+import { FirebaseClientService } from '../../../src/common-functions/firebase-client/firebase-client.service'
+import { AuthController } from '../../../src/functions/auth/auth.controller'
+import { AuthService } from '../../../src/functions/auth/auth.service'
 
 describe('AuthController', () => {
   let controller: AuthController

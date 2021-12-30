@@ -1,8 +1,8 @@
 import { Controller, Delete, Get, Req, Res } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { Request, Response } from 'express'
-import { FirebaseClientService } from '../../common-modules/firebase-client/firebase-client.service'
-import { FirebaseAdminService } from '../../common-modules/firebase-admin/firebase-admin.service'
+import { FirebaseClientService } from '../../common-functions/firebase-client/firebase-client.service'
+import { FirebaseAdminService } from '../../common-functions/firebase-admin/firebase-admin.service'
 
 @Controller('auth')
 export class AuthController {
