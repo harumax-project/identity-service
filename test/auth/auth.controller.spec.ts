@@ -7,7 +7,7 @@ import { AuthService } from '../../src/auth/auth.service'
 describe('AuthController', () => {
   let controller: AuthController
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [AuthService, FirebaseAdminService, FirebaseClientService],

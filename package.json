@@ -29,6 +29,7 @@
     "@nestjs/serve-static": "^2.2.2",
     "axios": "^0.24.0",
     "cookie-parser": "^1.4.5",
+    "dotenv": "^10.0.0",
     "express-session": "^1.17.2",
     "firebase": "^9.4.1",
     "firebase-admin": "^10.0.0",
@@ -82,6 +83,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFiles": [
+      "<rootDir>/config/test-config.ts"
+    ]
   }
 }
