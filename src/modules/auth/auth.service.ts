@@ -5,7 +5,7 @@ import jwt_decode from 'jwt-decode'
 import { Request } from 'express'
 import { AuthStatus, DecodedJWTToken } from './dto/auth.dto'
 import axios from 'axios'
-import { FirebaseAdminService } from '../firebase-admin/firebase-admin.service'
+import { FirebaseAdminService } from '../../common-modules/firebase-admin/firebase-admin.service'
 
 @Injectable()
 export class AuthService {
