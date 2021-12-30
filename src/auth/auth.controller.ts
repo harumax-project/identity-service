@@ -1,11 +1,16 @@
 import { Body, Controller, Delete, Get, Post, Req, Res } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { Request, Response } from 'express'
-import { FIREBASE_ADMIN, FIREBASE_CLIENT } from 'src/main'
+import { FirebaseClientService } from '../firebase-client/firebase-client.service'
+import { FirebaseAdminService } from '../firebase-admin/firebase-admin.service'
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private firebaseClint: FirebaseClientService,
+    private firebaseAdmin: FirebaseAdminService,
+  ) {}
   @Get()
   getRoot(@Req() req: Request, @Res() res: Response) {
     res.json({ message: 'identity service is alive' })
@@ -19,10 +24,10 @@ export class AuthController {
       return res.render('navigate')
     }
     return res.render(
-      `${process.env.HTML_NAME}`,
+      `${process.env.FIREBASE_PROJECT_ID}`,
       {
         title: 'Identity',
-        firebaseConfig: FIREBASE_CLIENT.firebaseConfig,
+        firebaseConfig: this.firebaseClint.firebaseConfig,
         signInRedirectURL: redirectURL,
         sessionLogin: `${process.env.IDENTITY_SERVICE_URL}/auth/session_login`,
       },
@@ -50,6 +55,7 @@ export class AuthController {
     console.log('session login')
     const idToken = req.headers.authorization.split(' ')[1]
     const csrfToken = await this.authService.createCsrfToken(req)
+    if (csrfToken === 'error') res.status(500).send('Internal server error')
     const expiresIn = 60000 * 5
     const options = {
       maxAge: expiresIn,
@@ -57,7 +63,7 @@ export class AuthController {
       secure: true,
       domain: process.env.BASE_DOMAIN,
     }
-    FIREBASE_ADMIN.auth.createSessionCookie(idToken, { expiresIn }).then(
+    this.firebaseAdmin.auth.createSessionCookie(idToken, { expiresIn }).then(
       (sessionCookie) => {
         res.cookie('__session', sessionCookie, options)
         res.cookie('__Secure_csrf', csrfToken, options)
@@ -73,8 +79,17 @@ export class AuthController {
   @Get('status')
   async checkAuthStatus(@Req() req: Request, @Res() res: Response) {
     console.log('check auth status')
+    const csrfToken = req.cookies.__Secure_csrf
+    const sessionToken = req.cookies.__session
+    if (!csrfToken || !sessionToken)
+      return res.json({ status: 'false', customToken: null })
+    const isSecure = await this.authService.checkCsrfToken(
+      csrfToken,
+      sessionToken,
+    )
+    if (!isSecure) return res.json({ status: 'false', customToken: null })
     try {
-      const authStatus = await this.authService.checkAuthStatus(req)
+      const authStatus = await this.authService.checkAuthStatus(sessionToken)
       res.json(authStatus)
     } catch (e) {
       res.status(500).send('Internal server error')
