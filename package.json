@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/serve-static": "^2.2.2",
     "axios": "^0.24.0",
+    "class-validator": "^0.13.2",
     "cookie-parser": "^1.4.5",
     "dotenv": "^10.0.0",
     "express-session": "^1.17.2",
