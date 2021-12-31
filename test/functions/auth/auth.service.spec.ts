@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { FirebaseAdminService } from '../../src/firebase-admin/firebase-admin.service'
-import { AuthService } from '../../src/auth/auth.service'
+import { FirebaseAdminService } from '../../../src/common-functions/firebase-admin/firebase-admin.service'
+import { AuthService } from '../../../src/functions/auth/auth.service'
 
 describe('AuthService', () => {
   let service: AuthService
