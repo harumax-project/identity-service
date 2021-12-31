@@ -17,7 +17,6 @@ export class AuthGuard extends BaseGuard {
     const headers = context.switchToHttp().getRequest().headers
     const authentication = headers.authorization
     const apiUserInfo = headers['x-apigateway-api-userinfo']
-    console.log(apiUserInfo)
 
     if (!authentication || !apiUserInfo) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)

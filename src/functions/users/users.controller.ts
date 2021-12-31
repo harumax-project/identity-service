@@ -1,7 +1,15 @@
-import { Controller, Get, Response, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Query,
+  Response,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common'
 import { GuardResponse } from 'src/common-functions/decorators/guard-response'
 import { AuthGuard } from 'src/guards/auth.guard'
-import { UserInfoDto } from './users-dto/userinfo.dto'
+import { UserInfoDto } from './users-dto/user-info.dto'
+import { UserQueryDto } from './users-dto/users-query.dto'
 import { UsersService } from './users.service'
 
 @Controller('users')
@@ -10,8 +18,11 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  getUsers(@Response() res, @GuardResponse() userInfo: UserInfoDto) {
-    console.log(userInfo)
+  getUsers(
+    @Query(ValidationPipe) query: UserQueryDto,
+    @GuardResponse() userInfo: UserInfoDto,
+    @Response() res,
+  ) {
     res.send('success')
   }
 }
