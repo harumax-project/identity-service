@@ -56,7 +56,7 @@ export class AuthController {
     const idToken = req.headers.authorization.split(' ')[1]
     const csrfToken = await this.authService.createCsrfToken(req)
     if (csrfToken === 'error') res.status(500).send('Internal server error')
-    const expiresIn = 60000 * 5
+    const expiresIn = 30 * 60 * 1000 //30min
     const options = {
       maxAge: expiresIn,
       httpOnly: true,
