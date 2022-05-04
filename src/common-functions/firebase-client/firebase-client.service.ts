@@ -1,6 +1,8 @@
+import { Injectable } from '@nestjs/common'
 import { FirebaseApp, initializeApp } from 'firebase/app'
 
-export class FirebaseClient {
+@Injectable()
+export class FirebaseClientService {
   private firebaseApp: FirebaseApp
   private firebaseConfigData = {
     apiKey: process.env.FIREBASE_API_KEY,

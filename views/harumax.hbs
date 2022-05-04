@@ -7,6 +7,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/ui/6.0.0/firebase-ui-auth.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.0/firebase-ui-auth.css" />
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.1/firebase-app.js";
@@ -28,7 +29,6 @@
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID,
       ],
     };
 
@@ -54,7 +54,31 @@
 </head>
 
 <body>
-  <div id="firebaseui-auth-container"></div>
+  <div class="login-box">
+    <h1>HARUMAX IDENTITY</h1>
+    <div id="firebaseui-auth-container"></div>
+  </div>
+  <style>
+    .login-box {
+      position: relative;
+      width: 100%;
+      height: 95vh;
+
+    }
+
+    h1 {
+      width: 100%;
+      text-align: center;
+      position: absolute;
+      top: 200px;
+    }
+
+    #firebaseui-auth-container {
+      position: absolute;
+      bottom: 50px;
+      width: 100%;
+    }
+  </style>
 </body>
 
 </html>

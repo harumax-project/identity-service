@@ -2,14 +2,15 @@ import { Injectable, Res } from '@nestjs/common'
 import * as jwt from 'jsonwebtoken'
 import jwt_decode from 'jwt-decode'
 
-import { auth, JWT } from 'google-auth-library'
 import { Request } from 'express'
 import { AuthStatus, DecodedJWTToken } from './dto/auth.dto'
-import { FIREBASE_ADMIN } from 'src/main'
 import axios from 'axios'
+import { FirebaseAdminService } from '../../common-functions/firebase-admin/firebase-admin.service'
 
 @Injectable()
 export class AuthService {
+  constructor(private firebaseAdmin: FirebaseAdminService) {}
+
   public decodeIdTokenFromHeaders(req: Request) {
     const authHeader = req.headers.authorization
     if (!authHeader) throw new Error('no authHeader')
@@ -38,7 +39,7 @@ export class AuthService {
 
   public createCustomToken(uid: string) {
     try {
-      return FIREBASE_ADMIN.auth.createCustomToken(uid)
+      return this.firebaseAdmin.auth.createCustomToken(uid)
     } catch (e) {
       console.log(e)
       return 'error'
@@ -69,11 +70,18 @@ export class AuthService {
     throw new Error('no custom token')
   }
 
+
+  /**
+   *
+   * @param req request
+   * @returns url of redirect after login. 22/05/04 use finance url
+   */
   public getRedirectUrl(req: Request): string {
-    const referer = req.headers.referer
-    return !referer
-      ? `${process.env.IDENTITY_SERVICE_URL}/auth/navigate`
-      : referer
+    return 'https://www.finance.harumax.com/'
+    // const referer = req.headers.referer
+    // return !referer
+    //   ? `${process.env.IDENTITY_SERVICE_URL}/auth/navigate`
+    //   : referer
   }
 
   public async logout(req: Request) {
@@ -81,7 +89,7 @@ export class AuthService {
     if (!sessionToken) return { status: 'false', customToken: null }
 
     const uid = this.decodeIdToken(sessionToken).user_id
-    const adminAuth = FIREBASE_ADMIN.auth
+    const adminAuth = this.firebaseAdmin.auth
     try {
       await adminAuth
         .revokeRefreshTokens(uid)

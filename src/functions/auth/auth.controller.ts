@@ -1,11 +1,16 @@
-import { Body, Controller, Delete, Get, Post, Req, Res } from '@nestjs/common'
+import { Controller, Delete, Get, Req, Res } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { Request, Response } from 'express'
-import { FIREBASE_ADMIN, FIREBASE_CLIENT } from 'src/main'
+import { FirebaseClientService } from '../../common-functions/firebase-client/firebase-client.service'
+import { FirebaseAdminService } from '../../common-functions/firebase-admin/firebase-admin.service'
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private firebaseClint: FirebaseClientService,
+    private firebaseAdmin: FirebaseAdminService,
+  ) {}
   @Get()
   getRoot(@Req() req: Request, @Res() res: Response) {
     res.json({ message: 'identity service is alive' })
@@ -22,7 +27,7 @@ export class AuthController {
       `${process.env.FIREBASE_PROJECT_ID}`,
       {
         title: 'Identity',
-        firebaseConfig: FIREBASE_CLIENT.firebaseConfig,
+        firebaseConfig: this.firebaseClint.firebaseConfig,
         signInRedirectURL: redirectURL,
         sessionLogin: `${process.env.IDENTITY_SERVICE_URL}/auth/session_login`,
       },
@@ -51,14 +56,14 @@ export class AuthController {
     const idToken = req.headers.authorization.split(' ')[1]
     const csrfToken = await this.authService.createCsrfToken(req)
     if (csrfToken === 'error') res.status(500).send('Internal server error')
-    const expiresIn = 60000 * 5
+    const expiresIn = 30 * 60 * 1000 //30min
     const options = {
       maxAge: expiresIn,
       httpOnly: true,
       secure: true,
       domain: process.env.BASE_DOMAIN,
     }
-    FIREBASE_ADMIN.auth.createSessionCookie(idToken, { expiresIn }).then(
+    this.firebaseAdmin.auth.createSessionCookie(idToken, { expiresIn }).then(
       (sessionCookie) => {
         res.cookie('__session', sessionCookie, options)
         res.cookie('__Secure_csrf', csrfToken, options)
