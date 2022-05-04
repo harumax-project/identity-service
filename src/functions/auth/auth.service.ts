@@ -70,14 +70,21 @@ export class AuthService {
     throw new Error('no custom token')
   }
 
-
   /**
    *
    * @param req request
    * @returns url of redirect after login. 22/05/04 use finance url
    */
   public getRedirectUrl(req: Request): string {
-    return 'https://www.finance.harumax.com/'
+    if (
+      process.env.NODE_ENV === 'local' ||
+      process.env.NODE_ENV === 'localDev'
+    ) {
+      return 'http://localhost:4200'
+    } else {
+      return 'https://www.finance.harumax.com/'
+    }
+
     // const referer = req.headers.referer
     // return !referer
     //   ? `${process.env.IDENTITY_SERVICE_URL}/auth/navigate`

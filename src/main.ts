@@ -10,6 +10,7 @@ const whitelist = [
   'https://harumax.com',
   'https://katten.harumax.com',
   'https://www.harumax.com',
+  'https://www.finance.harumax.com',
   'https://api.harumax.com',
   'https://id.harumax.com',
 ]
